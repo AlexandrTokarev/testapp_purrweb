@@ -1,2 +1,36 @@
 @import "~bootstrap/scss/bootstrap";
 
+body,
+#root {
+	height: 100vh;
+}
+
+.app {
+	background-image: url("./assets/bg-photo.jpg");
+	background-position: 50%;
+	background-size: cover;
+	height: 100%;
+}
+
+.app__header {
+	background-color: #026aa7;
+	box-sizing: border-box;
+	display: flex;
+	height: 40px;
+	overflow: hidden;
+	padding: 4px;
+	justify-content: center;
+	align-items: center;
+	
+	&-logo {
+		background-image: url("./assets/trello-logo.png");
+		background-position: 100% 0;
+		background-repeat: no-repeat;
+		background-size: 80px 25px;
+		cursor: pointer;
+		display: inline-block;
+		height: 30px;
+		width: 80px;
+		filter: brightness(1.3);
+	}
+}
