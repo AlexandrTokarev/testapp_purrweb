@@ -8,7 +8,7 @@ import Column from '../Column/Column';
 import AddColumn from '../AddColumn/AddColumn';
 import {MOVE_COLUMN} from "../../redux/actions/board";
 
-const Board: React.FC<{}> = () => {
+const Board: React.FC = () => {
 	const dispatch = useDispatch();
 	const board = useSelector<IAppState, IBoardState>(state => state.board);
 
@@ -57,7 +57,7 @@ const Board: React.FC<{}> = () => {
 							{addColumn
 								? <AddColumn toggleAddingList={toggleAddingList}/>
 								: <Button
-									onClick={toggleAddingList}
+									onClick={(e:  React.MouseEvent) => { e.stopPropagation(); toggleAddingList()}}
 									className='board__add-btn'
 								>
 									<i className='fa fa-plus'/> Добавить

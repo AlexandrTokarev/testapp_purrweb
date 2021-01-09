@@ -1,9 +1,8 @@
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
 import Button from 'react-bootstrap/Button';
 import {useDispatch} from 'react-redux';
-import {addColumn} from '../../redux/actions/board';
 import {uuidv4} from '../../helpers/utils';
-import {Column} from "../../redux/reducers/column";
+import {ADD_COLUMN} from "../../redux/actions/board";
 
 interface IProps {
 	toggleAddingList?: () => void
@@ -11,7 +10,6 @@ interface IProps {
 
 const AddColumn: React.FC<IProps> = ({toggleAddingList}) => {
 	const dispatch = useDispatch();
-	const dispatchAdd = (val: Column) => dispatch(addColumn(val));
 	const [title, setTitle] = useState<string>('');
 	const handleChangeTitle = ({target: {value}}: React.ChangeEvent<HTMLTextAreaElement>) => setTitle(value);
 
@@ -29,15 +27,7 @@ const AddColumn: React.FC<IProps> = ({toggleAddingList}) => {
 		e.target.style.height = `${e.target.scrollHeight}px`;
 	};
 
-	useEffect(() => {
-		document.addEventListener('click', handleClick, false);
-
-		return () => {
-			document.removeEventListener('click', handleClick, false);
-		}
-	}, [])
-
-	const handleClick = (e: MouseEvent) => {
+	const handleClick = useCallback((e: MouseEvent) => {
 		const node = addRef.current;
 
 		if (!node || node.contains(e.target as Node)) {
@@ -45,15 +35,26 @@ const AddColumn: React.FC<IProps> = ({toggleAddingList}) => {
 		}
 
 		toggleAddingList && toggleAddingList();
-	};
+	}, [toggleAddingList]);
+
+	useEffect(() => {
+		document.addEventListener('click', handleClick, false);
+
+		return () => {
+			document.removeEventListener('click', handleClick, false);
+		}
+	}, [handleClick])
 
 	const handleAdd = (): void => {
-		dispatchAdd({
-			id: uuidv4(),
-			title,
-			created: new Date().toISOString(),
-			updated: new Date().toISOString(),
-			cards: []
+		dispatch({
+			type: ADD_COLUMN,
+			payload: {
+				id: uuidv4(),
+				title,
+				created: new Date().toISOString(),
+				updated: new Date().toISOString(),
+				cards: []
+			}
 		});
 
 		toggleAddingList && toggleAddingList();

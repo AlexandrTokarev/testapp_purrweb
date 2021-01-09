@@ -14,10 +14,19 @@ const Column: React.FC<IProps> = ({title, index, columnId}) => {
 		<Draggable draggableId={columnId} index={index}>
 			{(provided, snapshot) => (
 
-				<Card className='column' bg='light' ref={provided.innerRef}
-					  {...provided.draggableProps}
-					  {...provided.dragHandleProps}>
-					<Card.Header>{title}</Card.Header>
+				<Card
+					className='column'
+					bg='light'
+					ref={provided.innerRef}
+					{...provided.draggableProps}
+					{...provided.dragHandleProps}
+				>
+					<Card.Header>
+						<span className='column__title'>{title}</span>
+						<div className='column__icon'>
+							<i className='fas fa-ellipsis-h'/>
+						</div>
+					</Card.Header>
 					<Card.Body style={{overflowY: 'auto'}}>
 
 						<Card.Text>

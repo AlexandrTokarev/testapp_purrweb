@@ -7,10 +7,11 @@ import { isNullOrEmpty } from '../../helpers/utils';
 import { LOGIN } from '../../redux/actions/user';
 
 interface IProps {
-	show: boolean
+	show: boolean,
+	close: () => void
 }
 
-const Register: React.FC<IProps> = ({ show = false }) => {
+const Register: React.FC<IProps> = ({ show = false, close }) => {
 	const [name, setName] = useState<string>('');
 	const dispatch = useDispatch();
 
@@ -22,7 +23,9 @@ const Register: React.FC<IProps> = ({ show = false }) => {
 		dispatch({
 			type: LOGIN,
 			payload: name
-		})
+		});
+
+		close && close()
 	}
 
 	return (
