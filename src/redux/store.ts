@@ -1,5 +1,6 @@
 import { Store, createStore } from 'redux';
-import reducer from './reducer';
+import rootReducer from './reducers';
+import { IAppState } from './types';
 
 declare var window: any;
 
@@ -10,8 +11,8 @@ const persistedState = typeof localState === 'string'
 	? JSON.parse(localState)
 	: {};
 
-const store: Store<any> = createStore(
-	reducer,
+const store: Store<IAppState> = createStore(
+	rootReducer,
 	persistedState,
 	window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
 )
