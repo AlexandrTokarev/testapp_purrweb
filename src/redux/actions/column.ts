@@ -1,2 +1,0 @@
-import { IActionType } from '../types';
-

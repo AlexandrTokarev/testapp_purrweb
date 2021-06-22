@@ -1,17 +1,15 @@
-import React, {useCallback, useEffect, useRef, useState} from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import Button from 'react-bootstrap/Button';
-import {useDispatch} from 'react-redux';
-import {uuidv4} from '../../helpers/utils';
-import {ADD_COLUMN} from "../../redux/actions/board";
+import { uuidv4 } from '../../helpers/utils';
+import { boardService } from '../../services/board';
 
 interface IProps {
 	toggleAddingList?: () => void
 }
 
-const AddColumn: React.FC<IProps> = ({toggleAddingList}) => {
-	const dispatch = useDispatch();
+const AddColumn: React.FC<IProps> = ({ toggleAddingList }) => {
 	const [title, setTitle] = useState<string>('');
-	const handleChangeTitle = ({target: {value}}: React.ChangeEvent<HTMLTextAreaElement>) => setTitle(value);
+	const handleChangeTitle = ({ target: { value } }: React.ChangeEvent<HTMLTextAreaElement>) => setTitle(value);
 
 	const addRef = useRef<HTMLDivElement>(null);
 
@@ -46,15 +44,12 @@ const AddColumn: React.FC<IProps> = ({toggleAddingList}) => {
 	}, [handleClick])
 
 	const handleAdd = (): void => {
-		dispatch({
-			type: ADD_COLUMN,
-			payload: {
-				id: uuidv4(),
-				title,
-				created: new Date().toISOString(),
-				updated: new Date().toISOString(),
-				cards: []
-			}
+		boardService.addColumn({
+			id: uuidv4(),
+			title,
+			created: new Date().toISOString(),
+			updated: new Date().toISOString(),
+			cards: []
 		});
 
 		toggleAddingList && toggleAddingList();
@@ -70,13 +65,13 @@ const AddColumn: React.FC<IProps> = ({toggleAddingList}) => {
 					value={title}
 					onChange={handleChangeTitle}
 					onKeyDown={onEnter}
-					style={{width: '100%'}}
+					style={{ width: '100%' }}
 				/>
 			</div>
 
 			<div className='add__buttons'>
-				<Button variant='success' onClick={handleAdd} disabled={title === ''}><i className='fa fa-plus'/> Добавить</Button>&nbsp;
-				<Button variant='secondary' onClick={toggleAddingList}><i className='fa fa-times'/></Button>
+				<Button variant='success' onClick={handleAdd} disabled={title === ''}><i className='fa fa-plus' /> Добавить</Button>&nbsp;
+				<Button variant='secondary' onClick={toggleAddingList}><i className='fa fa-times' /></Button>
 			</div>
 
 		</div>

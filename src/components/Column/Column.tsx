@@ -1,63 +1,95 @@
-import React from 'react';
-import Card from 'react-bootstrap/Card';
-import {Draggable} from "react-beautiful-dnd";
+import React, {useState} from 'react';
+import BootstrapCard from 'react-bootstrap/Card';
+import {Draggable, Droppable} from "react-beautiful-dnd";
+import Card from "../Card/Card";
+import Button from "react-bootstrap/Button";
+import {Dropdown} from "react-bootstrap";
+import {uuidv4} from "../../helpers/utils";
+import {userService} from "../../services/currentUser";
 
 interface IProps {
 	title: string,
 	index: number,
-	columnId: string
+	columnId: string,
+	defCards: Types.Card[],
+	onRemoveColumn(colId: string): void,
 }
 
-const Column: React.FC<IProps> = ({title, index, columnId}) => {
+const CustomToggle = React.forwardRef(({onClick}: { onClick(): void }, ref: any) => (
+	<div ref={ref} className='column__icon' onClick={onClick}>
+		<i className='fas fa-ellipsis-h' />
+	</div>
+));
+
+const Column: React.FC<IProps> = ({title, index, columnId, defCards, onRemoveColumn}) => {
+	const [cards, setCards] = useState<Types.Card[]>(defCards);
+	const [createdMode, setCreatedMode] = useState(false);
+
+	const onClickAddCard = () => {
+		if (!createdMode) {
+			setCreatedMode(true);
+			setCards(prevState => {
+				let newArr = [...prevState]
+				newArr.push({
+					id: uuidv4(),
+					title: '',
+					author: userService.getCurrentUser(),
+					description: ''
+				})
+
+				return newArr;
+			})
+		}
+	};
 
 	return (
 		<Draggable draggableId={columnId} index={index}>
 			{(provided, snapshot) => (
 
-				<Card
+				<BootstrapCard
 					className='column'
 					bg='light'
 					ref={provided.innerRef}
 					{...provided.draggableProps}
 					{...provided.dragHandleProps}
 				>
-					<Card.Header>
+					<BootstrapCard.Header>
 						<span className='column__title'>{title}</span>
-						<div className='column__icon'>
-							<i className='fas fa-ellipsis-h'/>
-						</div>
-					</Card.Header>
-					<Card.Body style={{overflowY: 'auto'}}>
+						<Dropdown>
+							<Dropdown.Toggle as={CustomToggle} />
+							<Dropdown.Menu>
+								<Dropdown.Header>Действия со списком</Dropdown.Header>
+								<Dropdown.Item onClick={onClickAddCard}>Добавить карточку...</Dropdown.Item>
+								<Dropdown.Item onClick={() => onRemoveColumn(columnId)}>Удалить</Dropdown.Item>
+								<Dropdown.Divider />
+								<Dropdown.Header>Сортировка</Dropdown.Header>
+								<Dropdown.Item>Сначала новые</Dropdown.Item>
+								<Dropdown.Item>Сначала старые</Dropdown.Item>
+							</Dropdown.Menu>
+						</Dropdown>
+					</BootstrapCard.Header>
 
-						<Card.Text>
-							Some quick example text to build on the card title and make up the bulk of
-							the card's content.
-							<div>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ipsum maxime nisi obcaecati provident
-								velit? Autem blanditiis consequatur dicta doloremque esse facere fuga libero, maxime nihil
-								pariatur rem sapiente vero, voluptas.</div>
-							<div>Ad dignissimos ducimus, esse explicabo fuga molestiae mollitia. Adipisci consequatur eligendi
-								iure laborum, maxime modi necessitatibus officia possimus repellendus sapiente sunt ullam.
-								Accusantium commodi doloremque quia repellendus repudiandae, sed veritatis!
-							</div>
-							<div>Exercitationem, id minus molestiae necessitatibus numquam provident sunt voluptatem!
-								Accusantium autem beatae cumque eaque ipsa. Ab aliquid cum doloremque eos iusto maiores natus
-								nihil nostrum pariatur, quo sed unde voluptates?
-							</div>
-							<div>Culpa dolorum eos facere mollitia nihil perspiciatis praesentium quo! Amet autem deleniti
-								dolor, ea eius, fugiat ipsa maxime molestias, nisi quam ratione sapiente suscipit vel? Aut ea
-								mollitia odio qui?
-							</div>
-							<div>Aperiam corporis culpa cum esse exercitationem impedit, in ipsum iusto nostrum nulla odio quae
-								quos sapiente tempore ullam veritatis, voluptas. Adipisci aliquid consectetur dignissimos dolor
-								et natus similique tempora, vel?
-							</div>
-							<div>Asperiores assumenda ea odio sunt vitae! Animi assumenda, atque blanditiis deleniti deserunt
-								dolor doloribus dolorum ducimus error est expedita hic id ipsa iure laudantium nulla odit quia
-								quis reiciendis similique.
-							</div>
-						</Card.Text>
-					</Card.Body>
-				</Card>
+					<Droppable droppableId={columnId}>
+						{(provided, _snapshot) => (
+							<BootstrapCard.Body style={{overflowY: 'auto'}} ref={provided.innerRef}>
+								{cards.map((card, idx) =>
+									<Card
+										key={card.id}
+										cardId={card.id}
+										index={idx}
+										columnId={columnId}
+										text={card.title}
+									/>
+								)}
+								{provided.placeholder}
+							</BootstrapCard.Body>
+						)}
+					</Droppable>
+
+					<BootstrapCard.Footer className='text-center'>
+						<Button className='column__add-card-btn' onClick={onClickAddCard}><i className='fa fa-plus' /> Добавить ещё одну карточку</Button>
+					</BootstrapCard.Footer>
+				</BootstrapCard>
 			)}
 		</Draggable>
 	)
