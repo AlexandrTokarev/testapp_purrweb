@@ -1,11 +1,11 @@
-import React, {useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import BootstrapCard from 'react-bootstrap/Card';
 import {Draggable, Droppable} from "react-beautiful-dnd";
 import Card from "../Card/Card";
 import Button from "react-bootstrap/Button";
 import {Dropdown} from "react-bootstrap";
-import {uuidv4} from "../../helpers/utils";
-import {userService} from "../../services/currentUser";
+import AddCard from "../AddCard/AddCard";
+import { boardService } from "../../services/board";
 
 interface IProps {
 	title: string,
@@ -26,21 +26,18 @@ const Column: React.FC<IProps> = ({title, index, columnId, defCards, onRemoveCol
 	const [createdMode, setCreatedMode] = useState(false);
 
 	const onClickAddCard = () => {
-		if (!createdMode) {
-			setCreatedMode(true);
-			setCards(prevState => {
-				let newArr = [...prevState]
-				newArr.push({
-					id: uuidv4(),
-					title: '',
-					author: userService.getCurrentUser(),
-					description: ''
-				})
-
-				return newArr;
-			})
-		}
+		setCreatedMode(true);
 	};
+
+	const toggleAddingCard = (): void => {
+		setCreatedMode(prev => !prev);
+		updateCards();
+	};
+
+	const updateCards = () => {
+		const newCards = boardService.getCardsForColumn(columnId);
+		setCards(newCards);
+	}
 
 	return (
 		<Draggable draggableId={columnId} index={index}>
@@ -82,6 +79,7 @@ const Column: React.FC<IProps> = ({title, index, columnId, defCards, onRemoveCol
 									/>
 								)}
 								{provided.placeholder}
+								{createdMode && <AddCard toggleAddingCard={toggleAddingCard} columnId={columnId} />}
 							</BootstrapCard.Body>
 						)}
 					</Droppable>

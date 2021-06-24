@@ -29,5 +29,9 @@ export const boardService = {
 		const board = this.getBoard();
 		board.columns = board.columns.filter(c => c.id !== columnId);
 		localStorage.setItem(BOARD_PROPERTY, JSON.stringify(board))
+	},
+	getCardsForColumn(columnId: string): Types.Card[] {
+		const board = this.getBoard();
+		return board.columns.find(c => c.id === columnId)?.cards ?? [];
 	}
 }

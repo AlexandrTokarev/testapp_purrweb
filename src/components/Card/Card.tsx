@@ -11,7 +11,9 @@ interface IProps {
 const Card: React.FC<IProps> = ({ cardId, index, columnId, text}) => {
 
 	return (
-		<Form.Control as="textarea" rows={3} defaultValue={text} />
+		<div className='column__card text-14'>
+			<span className='column__card-details'>{text}</span>
+		</div>
 	)
 };
 
