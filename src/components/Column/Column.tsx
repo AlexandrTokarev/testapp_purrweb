@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import BootstrapCard from 'react-bootstrap/Card';
-import {Draggable, Droppable} from "react-beautiful-dnd";
-import Card from "../Card/Card";
-import Button from "react-bootstrap/Button";
-import {Dropdown} from "react-bootstrap";
-import AddCard from "../AddCard/AddCard";
-import { boardService } from "../../services/board";
+import {Draggable, Droppable} from 'react-beautiful-dnd';
+import Card from '../Card/Card';
+import Button from 'react-bootstrap/Button';
+import {Dropdown} from 'react-bootstrap';
+import AddCard from '../AddCard/AddCard';
+import { boardService } from '../../services/board';
 
 interface IProps {
 	title: string,
@@ -41,7 +41,7 @@ const Column: React.FC<IProps> = ({title, index, columnId, defCards, onRemoveCol
 
 	return (
 		<Draggable draggableId={columnId} index={index}>
-			{(provided, snapshot) => (
+			{(provided) => (
 
 				<BootstrapCard
 					className='column'
@@ -66,7 +66,7 @@ const Column: React.FC<IProps> = ({title, index, columnId, defCards, onRemoveCol
 						</Dropdown>
 					</BootstrapCard.Header>
 
-					<Droppable droppableId={columnId}>
+					<Droppable droppableId={columnId} type='CARD'>
 						{(provided, _snapshot) => (
 							<BootstrapCard.Body style={{overflowY: 'auto'}} ref={provided.innerRef}>
 								{cards.map((card, idx) =>

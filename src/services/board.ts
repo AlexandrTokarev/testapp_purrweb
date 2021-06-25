@@ -33,5 +33,8 @@ export const boardService = {
 	getCardsForColumn(columnId: string): Types.Card[] {
 		const board = this.getBoard();
 		return board.columns.find(c => c.id === columnId)?.cards ?? [];
+	},
+	moveCard(sourceColumnId: string, targetColumnId: string, oldCardIndex: number, newCardIndex: number): void {
+		const board = this.getBoard();
 	}
 }

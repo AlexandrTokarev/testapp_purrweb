@@ -19,10 +19,10 @@ const AddColumn: React.FC<IProps> = ({ toggleAddingList }) => {
 			handleAdd();
 		}
 
-		// @ts-ignore
-		e.target.style.height = 'inherit';
-		// @ts-ignore
-		e.target.style.height = `${e.target.scrollHeight}px`;
+		const el = e.target as HTMLTextAreaElement;
+
+		el.style.height = 'inherit';
+		el.style.height = `${el.scrollHeight}px`;
 	};
 
 	const handleClick = useCallback((e: MouseEvent) => {

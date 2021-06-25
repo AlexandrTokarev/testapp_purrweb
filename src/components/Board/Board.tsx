@@ -14,13 +14,19 @@ const Board: React.FC = () => {
 	const handleDragEnd = ({ source, destination, type }: DropResult) => {
 		if (!destination) return;
 
-		if (type === "COLUMN") {
+		if (type === 'COLUMN') {
 			if (source.index !== destination.index) {
 				boardService.moveColumn(source.index, destination.index);
-				updateColumns();
 			}
-			return;
 		}
+
+		if (type === 'CARD') {
+			if (source.index !== destination.index || source.droppableId !== destination.droppableId) {
+				boardService.moveCard(source.droppableId, destination.droppableId, source.index, destination.index);
+			}
+		}
+
+		updateColumns();
 	};
 
 	const toggleAddingList = (): void => {
