@@ -36,5 +36,46 @@ export const boardService = {
 	},
 	moveCard(sourceColumnId: string, targetColumnId: string, oldCardIndex: number, newCardIndex: number): void {
 		const board = this.getBoard();
+		const columns = [...board.columns];
+		const sourceColumn = columns.find(c => c.id === sourceColumnId);
+
+		if (!sourceColumn)
+			throw Error('Колонка не найдена');
+
+		const targetCard = sourceColumn.cards[oldCardIndex];
+
+		if (sourceColumnId !== targetColumnId) {
+			sourceColumn.cards = sourceColumn.cards.filter(c => c.id !== targetCard.id);
+			const targetColumn = columns.find(c => c.id === targetColumnId);
+
+			if (!targetColumn)
+				throw Error('Целевая колонка не найдена');
+
+			const targetColumnCards = [...targetColumn.cards];
+
+			if (targetColumnCards.length === 0) {
+				targetColumnCards.push(targetCard);
+				targetColumn.cards = targetColumnCards;
+			} else {
+				const newCards = Array.from(targetColumnCards ?? []);
+				newCards.splice(newCardIndex, 0, targetCard);
+				targetColumn.cards = newCards;
+			}
+		} else {
+			const newCards = Array.from(sourceColumn.cards ?? []);
+			newCards.splice(oldCardIndex, 1);
+			newCards.splice(newCardIndex, 0, targetCard);
+			sourceColumn.cards = newCards;
+		}
+		board.columns = columns;
+		localStorage.setItem(BOARD_PROPERTY, JSON.stringify(board))
+	},
+	removeCard(columnId: string, cardId: string): void {
+		const column = this.getBoard().columns.find(c => c.id === columnId);
+
+		if (!column)
+			throw Error('Колонка не найдена');
+
+		column.cards = column.cards.filter(c => c.id !== cardId);
 	}
 }

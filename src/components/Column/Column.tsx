@@ -1,28 +1,26 @@
 import React, { useState } from 'react';
 import BootstrapCard from 'react-bootstrap/Card';
-import {Draggable, Droppable} from 'react-beautiful-dnd';
+import { Draggable, Droppable } from 'react-beautiful-dnd';
 import Card from '../Card/Card';
 import Button from 'react-bootstrap/Button';
-import {Dropdown} from 'react-bootstrap';
+import { Dropdown } from 'react-bootstrap';
 import AddCard from '../AddCard/AddCard';
-import { boardService } from '../../services/board';
 
 interface IProps {
-	title: string,
-	index: number,
-	columnId: string,
-	defCards: Types.Card[],
-	onRemoveColumn(colId: string): void,
+	title: string;
+	index: number;
+	onRemoveColumn(colId: string): void;
+	column: Types.Column;
+	updateColumns(): void;
 }
 
-const CustomToggle = React.forwardRef(({onClick}: { onClick(): void }, ref: any) => (
+const CustomToggle = React.forwardRef(({ onClick }: { onClick(): void }, ref: any) => (
 	<div ref={ref} className='column__icon' onClick={onClick}>
 		<i className='fas fa-ellipsis-h' />
 	</div>
 ));
 
-const Column: React.FC<IProps> = ({title, index, columnId, defCards, onRemoveColumn}) => {
-	const [cards, setCards] = useState<Types.Card[]>(defCards);
+const Column: React.FC<IProps> = ({ title, index, onRemoveColumn, column, updateColumns }) => {
 	const [createdMode, setCreatedMode] = useState(false);
 
 	const onClickAddCard = () => {
@@ -31,16 +29,11 @@ const Column: React.FC<IProps> = ({title, index, columnId, defCards, onRemoveCol
 
 	const toggleAddingCard = (): void => {
 		setCreatedMode(prev => !prev);
-		updateCards();
+		updateColumns();
 	};
 
-	const updateCards = () => {
-		const newCards = boardService.getCardsForColumn(columnId);
-		setCards(newCards);
-	}
-
 	return (
-		<Draggable draggableId={columnId} index={index}>
+		<Draggable draggableId={column.id} index={index}>
 			{(provided) => (
 
 				<BootstrapCard
@@ -57,7 +50,7 @@ const Column: React.FC<IProps> = ({title, index, columnId, defCards, onRemoveCol
 							<Dropdown.Menu>
 								<Dropdown.Header>Действия со списком</Dropdown.Header>
 								<Dropdown.Item onClick={onClickAddCard}>Добавить карточку...</Dropdown.Item>
-								<Dropdown.Item onClick={() => onRemoveColumn(columnId)}>Удалить</Dropdown.Item>
+								<Dropdown.Item onClick={() => onRemoveColumn(column.id)}>Удалить</Dropdown.Item>
 								<Dropdown.Divider />
 								<Dropdown.Header>Сортировка</Dropdown.Header>
 								<Dropdown.Item>Сначала новые</Dropdown.Item>
@@ -66,26 +59,27 @@ const Column: React.FC<IProps> = ({title, index, columnId, defCards, onRemoveCol
 						</Dropdown>
 					</BootstrapCard.Header>
 
-					<Droppable droppableId={columnId} type='CARD'>
+					<Droppable droppableId={column.id} type='CARD'>
 						{(provided, _snapshot) => (
-							<BootstrapCard.Body style={{overflowY: 'auto'}} ref={provided.innerRef}>
-								{cards.map((card, idx) =>
+							<BootstrapCard.Body style={{ overflowY: 'auto' }} ref={provided.innerRef}>
+								{column.cards.map((card, idx) =>
 									<Card
 										key={card.id}
 										cardId={card.id}
 										index={idx}
-										columnId={columnId}
+										columnId={column.id}
 										text={card.title}
 									/>
 								)}
 								{provided.placeholder}
-								{createdMode && <AddCard toggleAddingCard={toggleAddingCard} columnId={columnId} />}
+								{createdMode && <AddCard toggleAddingCard={toggleAddingCard} columnId={column.id} />}
 							</BootstrapCard.Body>
 						)}
 					</Droppable>
 
 					<BootstrapCard.Footer className='text-center'>
-						<Button className='column__add-card-btn' onClick={onClickAddCard}><i className='fa fa-plus' /> Добавить ещё одну карточку</Button>
+						<Button className='column__add-card-btn' onClick={onClickAddCard}>
+							<i className='fa fa-plus' /> Добавить ещё одну карточку</Button>
 					</BootstrapCard.Footer>
 				</BootstrapCard>
 			)}

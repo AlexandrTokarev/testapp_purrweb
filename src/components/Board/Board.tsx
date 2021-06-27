@@ -6,10 +6,8 @@ import AddColumn from '../AddColumn/AddColumn';
 import { boardService } from '../../services/board';
 
 const Board: React.FC = () => {
-	let board = boardService.getBoard();
-
 	const [addColumn, setAddColumn] = useState<boolean>(false);
-	const [columns, setColumns] = useState<Types.Column[]>(board.columns);
+	const [columns, setColumns] = useState<Types.Column[]>(boardService.getBoard().columns);
 
 	const handleDragEnd = ({ source, destination, type }: DropResult) => {
 		if (!destination) return;
@@ -40,7 +38,8 @@ const Board: React.FC = () => {
 	};
 
 	const updateColumns = () => {
-		setColumns(boardService.getBoard().columns);
+		const newColumns = boardService.getBoard().columns;
+		setColumns(newColumns);
 	};
 
 	return (
@@ -51,11 +50,11 @@ const Board: React.FC = () => {
 						{columns.map((column, idx) => (
 							<Column
 								key={column.id}
-								columnId={column.id}
 								title={column.title}
 								index={idx}
-								defCards={column.cards}
 								onRemoveColumn={onClickRemoveColumn}
+								column={column}
+								updateColumns={updateColumns}
 							/>
 						))}
 
