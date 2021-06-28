@@ -1,6 +1,6 @@
 import React from 'react';
 import { Draggable } from 'react-beautiful-dnd';
-import Button from "react-bootstrap/Button";
+import { Dropdown } from "react-bootstrap";
 
 interface IProps {
 	cardId: string;
@@ -8,6 +8,12 @@ interface IProps {
 	columnId: string;
 	text: string;
 }
+
+const CustomToggle = React.forwardRef(({ onClick }: { onClick(): void }, ref: any) => (
+	<div ref={ref} className='column__card-edit' onClick={onClick}>
+		<i className='fas fa-pen'/>
+	</div>
+));
 
 const Card: React.FC<IProps> = ({ cardId, index, text }) => {
 
@@ -21,7 +27,14 @@ const Card: React.FC<IProps> = ({ cardId, index, text }) => {
 					className='column__card text-14'
 				>
 					<span className='column__card-details'>{text}</span>
-					<Button className='column__card-edit'><i className='fas fa-pen'/></Button>
+					<Dropdown drop='right'>
+						<Dropdown.Toggle as={CustomToggle}/>
+						<Dropdown.Menu >
+							<Dropdown.Item>Открыть</Dropdown.Item>
+							<Dropdown.Item>Изменить</Dropdown.Item>
+							<Dropdown.Item>Удалить</Dropdown.Item>
+						</Dropdown.Menu>
+					</Dropdown>
 				</div>)}
 		</Draggable>
 	)

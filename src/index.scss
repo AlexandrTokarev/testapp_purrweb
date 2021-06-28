@@ -118,7 +118,8 @@ body,
       border-radius: 3px;
       box-shadow: 0 1px 0 rgba(9,30,66,.25);
       cursor: pointer;
-      display: block;
+      display: flex;
+      align-items: flex-start;
       margin-bottom: 8px;
       max-width: 300px;
       min-height: 20px;
@@ -126,7 +127,6 @@ body,
       z-index: 0;
       overflow: hidden;
       padding: 6px 8px 2px;
-      position: relative;
 
       &-details {
         clear: both;
@@ -136,6 +136,11 @@ body,
         text-decoration: none;
         word-wrap: break-word;
         color: #172b4d;
+        flex: 1 1 auto;
+      }
+
+      & > .dropright {
+        position: inherit;
       }
 
       &-edit {
@@ -145,7 +150,6 @@ body,
         border-radius: 3px;
         opacity: .8;
         padding: 8px;
-        position: absolute;
         right: 2px;
         top: 2px;
         visibility: hidden;
